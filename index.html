@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Arranque Interactivo - Magia Tecno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Tech Harmony -->
+    <!-- Application Structure Plan: He diseñado la aplicación como un panel de control interactivo en lugar de un documento lineal. La estructura se centra en un 'roadmap' visual donde los usuarios pueden hacer clic en cada fase (Día 1, 2, 3, 7) para revelar las tareas detalladas. Este enfoque mejora la usabilidad al presentar primero una vista general de alto nivel (objetivos y fases) y luego permitir al usuario profundizar en los detalles específicos que le interesan. Se complementa con visualizaciones (gráficos de Chart.js) para representar las áreas de enfoque y las métricas clave, transformando el texto del plan en datos más digeribles y atractivos. Esta estructura fue elegida porque convierte un plan estático en una herramienta de exploración dinámica, facilitando la comprensión y el seguimiento del progreso. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Objetivos de los 7 días -> Goal: Informar/Destacar -> Viz/Presentation: Tarjetas de Iconos (HTML/Tailwind) -> Interaction: Estático -> Justification: Presenta los resultados clave de forma inmediata y clara.
+        - Report Info: Fases del plan (Días 1, 2, 3, 7) -> Goal: Organizar/Navegar -> Viz/Presentation: Roadmap/Timeline Interactivo (HTML/Tailwind) -> Interaction: Clic para mostrar/ocultar detalles (JS) -> Justification: Transforma la estructura cronológica en una experiencia de navegación no lineal y atractiva.
+        - Report Info: Distribución de tareas -> Goal: Comparar/Informar -> Viz/Presentation: Gráfico de Donut (Chart.js/Canvas) -> Interaction: Hover para ver detalles -> Justification: Ofrece un resumen visual rápido de dónde se concentra el esfuerzo durante la semana.
+        - Report Info: Métricas de la campaña -> Goal: Informar/Establecer Metas -> Viz/Presentation: Gráfico de Barras (Chart.js/Canvas) -> Interaction: Hover para ver valores -> Justification: Convierte la mención textual de "estadísticas" en un objetivo visual y cuantificable.
+        - Report Info: Tareas detalladas y "Extras" -> Goal: Informar -> Viz/Presentation: Listas detalladas con iconos (HTML/Tailwind) -> Interaction: Se muestran/ocultan según la selección en el roadmap -> Justification: Permite al usuario acceder a la información granular sin abrumar la vista principal.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 320px;
+            width: 100%;
+            max-width: 500px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .step-item.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .step-item.active h3 {
+            color: #2563eb;
+        }
+        .details-section {
+            transition: all 0.3s ease-in-out;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Plan de Arranque Interactivo</h1>
+            <p class="text-xl text-blue-600 font-medium mt-2">Magia Tecno</p>
+            <p class="mt-4 max-w-3xl mx-auto text-gray-600">
+                Este es un panel interactivo que desglosa el plan de 7 días para lanzar "Magia Tecno". Navega a través de las fases para explorar las tareas, objetivos y extras que transformarán la idea en una tienda digital automatizada y funcional.
+            </p>
+        </header>
+
+        <section id="objetivos" class="mb-12">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">🎯 Objetivos en los Primeros 7 Días</h2>
+            <div class="grid md:grid-cols-3 gap-6 text-center">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <div class="text-4xl mb-3">⚙️</div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-900">Tienda Automatizada</h3>
+                    <p class="text-gray-600 text-sm">Establecer una infraestructura digital robusta para la interacción automática con clientes.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                     <div class="text-4xl mb-3">📈</div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-900">Captación de Clientes</h3>
+                    <p class="text-gray-600 text-sm">Activar campañas de publicidad para generar tráfico y potenciales clientes reales.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <div class="text-4xl mb-3"> освободить</div>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-900">Liberación Manual</h3>
+                    <p class="text-gray-600 text-sm">Reducir el trabajo operativo manual para enfocarse en la estrategia y resultados medibles.</p>
+                </div>
+            </div>
+        </section>
+
+        <main>
+            <h2 class="text-2xl font-bold text-center mb-8 text-gray-800">🗺️ Roadmap de Lanzamiento</h2>
+            <p class="text-center text-gray-600 max-w-2xl mx-auto mb-8">
+                El plan se estructura en varias fases clave, desde la configuración inicial hasta el análisis y optimización. Haz clic en cada paso del roadmap para ver las tareas detalladas asociadas a ese día.
+            </p>
+
+            <div id="roadmap" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="step-item cursor-pointer p-4 rounded-lg border-2 border-gray-300 bg-white text-center transition-all duration-300 hover:shadow-lg hover:border-blue-400 active" data-day="1">
+                    <p class="text-sm text-gray-500">Día 1</p>
+                    <h3 class="font-semibold text-gray-800">Activación Digital</h3>
+                </div>
+                <div class="step-item cursor-pointer p-4 rounded-lg border-2 border-gray-300 bg-white text-center transition-all duration-300 hover:shadow-lg hover:border-blue-400" data-day="2">
+                    <p class="text-sm text-gray-500">Día 2</p>
+                    <h3 class="font-semibold text-gray-800">Automatización</h3>
+                </div>
+                <div class="step-item cursor-pointer p-4 rounded-lg border-2 border-gray-300 bg-white text-center transition-all duration-300 hover:shadow-lg hover:border-blue-400" data-day="3">
+                    <p class="text-sm text-gray-500">Día 3</p>
+                    <h3 class="font-semibold text-gray-800">Lanzamiento</h3>
+                </div>
+                <div class="step-item cursor-pointer p-4 rounded-lg border-2 border-gray-300 bg-white text-center transition-all duration-300 hover:shadow-lg hover:border-blue-400" data-day="7">
+                    <p class="text-sm text-gray-500">Día 7</p>
+                    <h3 class="font-semibold text-gray-800">Análisis</h3>
+                </div>
+            </div>
+
+            <div id="details-container" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <!-- Content will be injected here by JS -->
+            </div>
+        </main>
+        
+        <section id="visuals" class="mt-12 grid md:grid-cols-2 gap-8 items-center">
+             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h3 class="text-xl font-bold text-center mb-1 text-gray-800">Foco de Esfuerzo por Fase</h3>
+                 <p class="text-center text-sm text-gray-600 mb-4">Distribución de las tareas clave durante la semana de arranque.</p>
+                <div class="chart-container">
+                    <canvas id="tasksChart"></canvas>
+                </div>
+            </div>
+             <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <h3 class="text-xl font-bold text-center mb-1 text-gray-800">Métricas Clave a Monitorear</h3>
+                 <p class="text-center text-sm text-gray-600 mb-4">Ejemplo de indicadores de rendimiento para la primera campaña.</p>
+                <div class="chart-container">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="extras" class="mt-12 bg-blue-50 p-8 rounded-xl border border-blue-200">
+             <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">➕ Extras de la Primera Semana</h2>
+             <p class="text-center text-gray-600 max-w-2xl mx-auto mb-8">
+                Estas tareas se ejecutan en paralelo para asegurar que el ecosistema digital sea robusto y esté listo para crecer desde el primer momento, garantizando una experiencia de cliente fluida.
+            </p>
+            <ul class="space-y-4 max-w-2xl mx-auto">
+                <li class="flex items-start">
+                    <span class="text-blue-600 mr-3 mt-1">✓</span>
+                    <div><strong class="text-gray-900">Seguimiento Automático:</strong> Configurar mensajes para clientes que interactuaron pero no compraron.</div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-blue-600 mr-3 mt-1">✓</span>
+                    <div><strong class="text-gray-900">Sistema de Fidelización:</strong> Probar mensajes de recordatorio o promociones para fomentar la recompra.</div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-blue-600 mr-3 mt-1">✓</span>
+                    <div><strong class="text-gray-900">Soporte Técnico en Tiempo Real:</strong> Supervisión constante para garantizar que todos los sistemas fluyan sin problemas.</div>
+                </li>
+            </ul>
+        </section>
+
+        <footer class="text-center mt-12 pt-6 border-t border-gray-200">
+            <p class="text-gray-500 text-sm">&copy; 2025 Magia Tecno. Plan de arranque interactivo.</p>
+        </footer>
+    </div>
+
+    <script>
+        const planData = {
+            '1': {
+                title: '🚀 Fase 1: Activación de Base Digital',
+                description: 'El primer día se centra en crear y optimizar la presencia fundamental de Magia Tecno en redes sociales, asegurando una base profesional para todas las operaciones futuras.',
+                tasks: [
+                    '<strong>Creación/Configuración de Página de Facebook:</strong> Asegurar que la página cumpla con los estándares profesionales.',
+                    '<strong>Ajustes de Identidad Visual:</strong> Optimizar portada, logo, descripción y datos de contacto.',
+                    '<strong>Activación de Meta Business Suite:</strong> Configurar la plataforma central para la gestión de redes.'
+                ],
+                llmFeature: null
+            },
+            '2': {
+                title: '⚙️ Fase 2: Integración del Sistema Automatizado',
+                description: 'El segundo día se dedica a implementar la tecnología de automatización que gestionará las interacciones iniciales con los clientes y presentará los productos.',
+                tasks: [
+                    '<strong>Instalación y Personalización de Bot:</strong> Configurar el chatbot en Facebook e Instagram.',
+                    '<strong>Carga de Catálogo Básico:</strong> Subir los productos más vendidos al sistema.',
+                    '<strong>Configuración de Respuestas y Direccionamiento:</strong> Optimizar el flujo del bot y dirigir a WhatsApp para ventas.'
+                ],
+                llmFeature: null
+            },
+            '3': {
+                title: '📢 Fase 3: Lanzamiento de la Primera Campaña',
+                description: 'El tercer día marca el inicio de la captación activa de clientes mediante publicidad pagada, poniendo a prueba la configuración inicial.',
+                tasks: [
+                    '<strong>Diseño del Primer Anuncio:</strong> Crear una imagen/video y un texto persuasivo.',
+                    '<strong>Segmentación de Público:</strong> Definir la audiencia objetivo interesada en tecnología.',
+                    '<strong>Activación de Presupuesto de Prueba:</strong> Lanzar la campaña con una inversión inicial para medir resultados.'
+                ],
+                llmFeature: {
+                    buttonText: '✨ Generar Ideas de Copy para Anuncios',
+                    action: 'generateAdCopy',
+                    resultId: 'adCopyResult'
+                }
+            },
+            '7': {
+                title: '📊 Fase 4: Análisis y Ajustes',
+                description: 'Al final de la semana, se realiza una evaluación crítica del rendimiento para refinar la estrategia y planificar los siguientes pasos con base en datos reales.',
+                tasks: [
+                    '<strong>Revisión de Estadísticas:</strong> Analizar clics, mensajes, interacciones y costo por resultado.',
+                    '<strong>Ajustes en Bot o Anuncio:</strong> Optimizar elementos según los datos recopilados.',
+                    '<strong>Planificación del Siguiente Ciclo:</strong> Delinear futuras campañas y contenidos con las lecciones aprendidas.'
+                ],
+                llmFeature: {
+                    buttonText: '✨ Obtener Sugerencias de Optimización',
+                    action: 'getOptimizationSuggestions',
+                    resultId: 'optimizationSuggestionsResult'
+                }
+            }
+        };
+
+        const detailsContainer = document.getElementById('details-container');
+        const roadmapSteps = document.querySelectorAll('.step-item');
+
+        async function callGeminiAPI(prompt, isStructured = false, schema = null) {
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            let payload = { contents: chatHistory };
+
+            if (isStructured && schema) {
+                payload.generationConfig = {
+                    responseMimeType: "application/json",
+                    responseSchema: schema
+                };
+            }
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    return isStructured ? JSON.parse(text) : text;
+                } else {
+                    console.error("Gemini API response structure unexpected:", result);
+                    return "Error: No se pudo obtener una respuesta válida de la IA.";
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                return "Error al conectar con la IA. Inténtalo de nuevo.";
+            }
+        }
+
+        async function generateAdCopy() {
+            const adCopyResultDiv = document.getElementById('adCopyResult');
+            adCopyResultDiv.innerHTML = '<div class="text-center py-4 text-blue-600"><div class="loading-spinner"></div> Generando ideas de copy...</div>';
+
+            const prompt = "Genera 3 ideas de copy persuasivo para un anuncio de Facebook/Instagram para una tienda de tecnología llamada 'Magia Tecno'. El objetivo es captar clientes desde publicidad real. Cada idea debe ser un objeto JSON con las propiedades 'titulo', 'descripcion' y 'llamada_a_la_accion'. Asegúrate de que el contenido sea atractivo para personas interesadas en tecnología.";
+            const schema = {
+                type: "ARRAY",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        "titulo": { "type": "STRING" },
+                        "descripcion": { "type": "STRING" },
+                        "llamada_a_la_accion": { "type": "STRING" }
+                    },
+                    "propertyOrdering": ["titulo", "descripcion", "llamada_a_la_accion"]
+                }
+            };
+
+            const result = await callGeminiAPI(prompt, true, schema);
+
+            if (typeof result === 'string') {
+                adCopyResultDiv.innerHTML = `<p class="text-red-500">${result}</p>`;
+            } else {
+                let html = '<h4 class="font-semibold text-lg mb-3 text-gray-800">Ideas de Copy Generadas:</h4><div class="space-y-4">';
+                result.forEach((ad, index) => {
+                    html += `
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <p class="font-bold text-blue-700 mb-1">Idea ${index + 1}</p>
+                            <p><strong>Título:</strong> ${ad.titulo}</p>
+                            <p><strong>Descripción:</strong> ${ad.descripcion}</p>
+                            <p><strong>Llamada a la acción:</strong> ${ad.llamada_a_la_accion}</p>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                adCopyResultDiv.innerHTML = html;
+            }
+        }
+
+        async function getOptimizationSuggestions() {
+            const suggestionsResultDiv = document.getElementById('optimizationSuggestionsResult');
+            suggestionsResultDiv.innerHTML = '<div class="text-center py-4 text-blue-600"><div class="loading-spinner"></div> Obteniendo sugerencias de optimización...</div>';
+
+            const prompt = "Una campaña digital inicial para una tienda de tecnología ('Magia Tecno') obtuvo 150 clics, 45 mensajes y 200 interacciones. Sugiere 3 ajustes concretos que se podrían hacer en el bot o el anuncio para mejorar la efectividad, considerando que el objetivo es aumentar la captación de clientes y la conversión a ventas. Enumera cada sugerencia.";
+
+            const result = await callGeminiAPI(prompt);
+
+            if (typeof result === 'string') {
+                suggestionsResultDiv.innerHTML = `
+                    <h4 class="font-semibold text-lg mb-3 text-gray-800">Sugerencias de Optimización:</h4>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <p class="text-gray-700 whitespace-pre-wrap">${result}</p>
+                    </div>
+                `;
+            } else {
+                suggestionsResultDiv.innerHTML = `<p class="text-red-500">Error: No se pudo obtener sugerencias de la IA.</p>`;
+            }
+        }
+
+        function renderDetails(day) {
+            const data = planData[day];
+            if (!data) return;
+
+            let tasksHtml = data.tasks.map(task => 
+                `<li class="flex items-start"><span class="text-blue-500 font-bold mr-3 mt-1">›</span><div>${task}</div></li>`
+            ).join('');
+
+            let llmButtonHtml = '';
+            let llmResultContainerHtml = '';
+            if (data.llmFeature) {
+                llmButtonHtml = `
+                    <button id="${data.llmFeature.action}Btn" class="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300">
+                        ${data.llmFeature.buttonText}
+                    </button>
+                `;
+                llmResultContainerHtml = `<div id="${data.llmFeature.resultId}" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200"></div>`;
+            }
+
+            detailsContainer.innerHTML = `
+                <div class="details-section">
+                    <h3 class="text-xl font-bold mb-2 text-gray-900">${data.title}</h3>
+                    <p class="text-gray-600 mb-4">${data.description}</p>
+                    <ul class="space-y-3 text-gray-700">${tasksHtml}</ul>
+                    ${llmButtonHtml}
+                    ${llmResultContainerHtml}
+                </div>
+            `;
+
+            if (data.llmFeature) {
+                const llmButton = document.getElementById(`${data.llmFeature.action}Btn`);
+                if (llmButton) {
+                    if (data.llmFeature.action === 'generateAdCopy') {
+                        llmButton.addEventListener('click', generateAdCopy);
+                    } else if (data.llmFeature.action === 'getOptimizationSuggestions') {
+                        llmButton.addEventListener('click', getOptimizationSuggestions);
+                    }
+                }
+            }
+        }
+
+        roadmapSteps.forEach(step => {
+            step.addEventListener('click', () => {
+                roadmapSteps.forEach(s => s.classList.remove('active'));
+                step.classList.add('active');
+                const day = step.getAttribute('data-day');
+                renderDetails(day);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDetails('1'); 
+            
+            const tasksCtx = document.getElementById('tasksChart').getContext('2d');
+            new Chart(tasksCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Configuración', 'Automatización', 'Lanzamiento', 'Análisis y Extras'],
+                    datasets: [{
+                        label: 'Foco de Esfuerzo',
+                        data: [3, 3, 3, 4],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(22, 163, 74, 0.7)',
+                            'rgba(249, 115, 22, 0.7)'
+                        ],
+                        borderColor: [
+                            '#ffffff'
+                        ],
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const metricsCtx = document.getElementById('metricsChart').getContext('2d');
+            new Chart(metricsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Clics', 'Mensajes', 'Interacciones'],
+                    datasets: [{
+                        label: 'Resultados Esperados (Ejemplo)',
+                        data: [150, 45, 200],
+                         backgroundColor: [
+                            'rgba(59, 130, 246, 0.6)',
+                            'rgba(22, 163, 74, 0.6)',
+                            'rgba(249, 115, 22, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(22, 163, 74, 1)',
+                            'rgba(249, 115, 22, 1)'
+                        ],
+                        borderWidth: 1.5,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                           display: false
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
